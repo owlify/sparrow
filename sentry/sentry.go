@@ -6,7 +6,7 @@ import (
 
 	"github.com/getsentry/sentry-go"
 
-	"sparrow/environment"
+	"github.com/owlify/sparrow/environment"
 )
 
 var env environment.Environment

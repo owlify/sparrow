@@ -1,4 +1,4 @@
-module sparrow
+module github.com/owlify/sparrow
 
 go 1.21
 

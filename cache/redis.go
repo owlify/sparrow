@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gomodule/redigo/redis"
-	"sparrow/logger"
+	"github.com/owlify/sparrow/logger"
 )
 
 type redisClient struct {

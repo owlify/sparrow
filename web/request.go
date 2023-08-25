@@ -16,8 +16,8 @@ import (
 	"github.com/go-playground/validator/v10/non-standard/validators"
 	"github.com/newrelic/go-agent/v3/newrelic"
 
-	"sparrow/errors"
-	"sparrow/logger"
+	"github.com/owlify/sparrow/errors"
+	"github.com/owlify/sparrow/logger"
 )
 
 type Request struct {

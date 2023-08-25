@@ -8,9 +8,9 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"sparrow/environment"
-	"sparrow/request_id"
-	"sparrow/sentry"
+	"github.com/owlify/sparrow/environment"
+	"github.com/owlify/sparrow/request_id"
+	"github.com/owlify/sparrow/sentry"
 )
 
 var logger *zap.Logger

@@ -8,7 +8,7 @@ import (
 	"github.com/imroc/req/v3"
 	"github.com/newrelic/go-agent/v3/newrelic"
 
-	"sparrow/request_id"
+	"github.com/owlify/sparrow/request_id"
 )
 
 type clientMiddleware func(client *req.Client) *req.Client

@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"sparrow/environment"
+	"github.com/owlify/sparrow/environment"
 )
 
 func NotifyZap(encoder zapcore.Encoder, message string, fields ...zapcore.Field) {
