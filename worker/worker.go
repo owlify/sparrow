@@ -24,6 +24,7 @@ type worker struct {
 type Worker interface {
 	Start(context.Context) error
 	RegisterHandlers([]*Handler)
+	Stop()
 }
 
 var (
