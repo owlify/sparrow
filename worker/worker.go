@@ -63,7 +63,7 @@ func (w *worker) Start(ctx context.Context) error {
 
 	for _, handler := range w.handlers {
 		mux.HandleFunc(
-			handler.Name,
+			handler.TaskName,
 			handler.HandlerFunc,
 		)
 	}

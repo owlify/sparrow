@@ -5,6 +5,6 @@ import (
 )
 
 type Handler struct {
-	Name        string
+	TaskName    string
 	HandlerFunc asynq.HandlerFunc
 }
