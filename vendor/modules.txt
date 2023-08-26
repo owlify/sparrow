@@ -9,6 +9,9 @@ github.com/cespare/xxhash/v2
 github.com/dgraph-io/ristretto
 github.com/dgraph-io/ristretto/z
 github.com/dgraph-io/ristretto/z/simd
+# github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f
+## explicit
+github.com/dgryski/go-rendezvous
 # github.com/dustin/go-humanize v1.0.0
 ## explicit
 github.com/dustin/go-humanize
@@ -67,12 +70,28 @@ github.com/google/pprof/profile
 # github.com/google/uuid v1.3.1
 ## explicit
 github.com/google/uuid
+# github.com/gorilla/mux v1.8.0
+## explicit; go 1.12
+github.com/gorilla/mux
 # github.com/hashicorp/errwrap v1.1.0
 ## explicit
 github.com/hashicorp/errwrap
 # github.com/hashicorp/go-multierror v1.1.1
 ## explicit; go 1.13
 github.com/hashicorp/go-multierror
+# github.com/hibiken/asynq v0.24.1
+## explicit; go 1.14
+github.com/hibiken/asynq
+github.com/hibiken/asynq/internal/base
+github.com/hibiken/asynq/internal/context
+github.com/hibiken/asynq/internal/errors
+github.com/hibiken/asynq/internal/log
+github.com/hibiken/asynq/internal/proto
+github.com/hibiken/asynq/internal/rdb
+github.com/hibiken/asynq/internal/timeutil
+# github.com/hibiken/asynqmon v0.7.2
+## explicit; go 1.16
+github.com/hibiken/asynqmon
 # github.com/imroc/req/v3 v3.41.7
 ## explicit; go 1.20
 github.com/imroc/req/v3
@@ -178,6 +197,9 @@ github.com/newrelic/go-agent/v3/internal/sysinfo
 github.com/newrelic/go-agent/v3/internal/utilization
 github.com/newrelic/go-agent/v3/newrelic
 github.com/newrelic/go-agent/v3/newrelic/sqlparse
+# github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.2
+## explicit; go 1.19
+github.com/newrelic/go-agent/v3/integrations/nrhttprouter
 # github.com/newrelic/go-agent/v3/integrations/nrpgx v1.0.0
 ## explicit; go 1.11
 github.com/newrelic/go-agent/v3/integrations/nrpgx
@@ -225,10 +247,26 @@ github.com/quic-go/quic-go/internal/utils/ringbuffer
 github.com/quic-go/quic-go/internal/wire
 github.com/quic-go/quic-go/logging
 github.com/quic-go/quic-go/quicvarint
+# github.com/redis/go-redis/v9 v9.0.4
+## explicit; go 1.18
+github.com/redis/go-redis/v9
+github.com/redis/go-redis/v9/internal
+github.com/redis/go-redis/v9/internal/hashtag
+github.com/redis/go-redis/v9/internal/hscan
+github.com/redis/go-redis/v9/internal/pool
+github.com/redis/go-redis/v9/internal/proto
+github.com/redis/go-redis/v9/internal/rand
+github.com/redis/go-redis/v9/internal/util
 # github.com/refraction-networking/utls v1.4.3
 ## explicit; go 1.20
 github.com/refraction-networking/utls
 github.com/refraction-networking/utls/internal/helper
+# github.com/robfig/cron/v3 v3.0.1
+## explicit; go 1.12
+github.com/robfig/cron/v3
+# github.com/spf13/cast v1.5.0
+## explicit; go 1.18
+github.com/spf13/cast
 # github.com/tuvistavie/securerandom v0.0.0-20140719024926-15512123a948
 ## explicit
 github.com/tuvistavie/securerandom
@@ -316,6 +354,9 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/width
+# golang.org/x/time v0.3.0
+## explicit
+golang.org/x/time/rate
 # golang.org/x/tools v0.12.0
 ## explicit; go 1.18
 golang.org/x/tools/go/ast/astutil
@@ -384,7 +425,7 @@ google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
-# google.golang.org/protobuf v1.29.1
+# google.golang.org/protobuf v1.30.0
 ## explicit; go 1.11
 google.golang.org/protobuf/encoding/protojson
 google.golang.org/protobuf/encoding/prototext
