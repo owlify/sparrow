@@ -31,7 +31,7 @@ var (
 	workerInstance worker
 )
 
-func NewWorker(opts *WorkerOpts) (Worker, error) {
+func NewWorker(opts *WorkerOpts) Worker {
 	redisClientOpts := asynq.RedisClientOpt{
 		PoolSize: opts.PoolSize,
 		Addr:     opts.RedisUrl,
@@ -51,7 +51,7 @@ func NewWorker(opts *WorkerOpts) (Worker, error) {
 
 	return &worker{
 		server: workerServer,
-	}, nil
+	}
 }
 
 func (w *worker) RegisterHandlers(handlers []*Handler) {
