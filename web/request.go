@@ -15,6 +15,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/go-playground/validator/v10/non-standard/validators"
 	"github.com/newrelic/go-agent/v3/newrelic"
+	"github.com/google/uuid"
 
 	"github.com/owlify/sparrow/errors"
 	"github.com/owlify/sparrow/logger"
@@ -205,6 +206,28 @@ func (r *Request) ParseAndValidateBody(s interface{}) error {
 	return errors.NewWithErr("bad_request", e)
 }
 
+func (r *Request) ParseAndValidateParams(s interface{}, structValidations ...validator.StructLevelFunc) error {
+
+	queryParams := r.QueryParams()
+	pathParams := r.GetPathParams()
+	allParams := make(map[string]string)
+	for key, value := range queryParams {
+		allParams[key] = value
+	}
+	for key, value := range pathParams {
+		allParams[key] = value
+	}
+	jsonString, _ := json.Marshal(allParams)
+
+	err := json.Unmarshal(jsonString, &s)
+	var e error
+	if err != nil {
+		e = handleValidationErrors(err)
+		return errors.NewWithErr("bad_request", e)
+	}
+	return validateStruct(s, structValidations...)
+}
+
 func validateStruct(s interface{}, structValidations ...validator.StructLevelFunc) ValidationErrorInterface {
 	var validate = validator.New()
 
@@ -223,10 +246,22 @@ func validateStruct(s interface{}, structValidations ...validator.StructLevelFun
 		validate.RegisterStructValidation(sValidation, s)
 	}
 
+	validate.RegisterCustomTypeFunc(validateUUID, uuid.UUID{})
+
 	if err := validate.Struct(s); err != nil {
 		return handleValidationErrors(err)
 	}
 
+	return nil
+}
+
+func validateUUID(field reflect.Value) interface{} {
+	if valuer, ok := field.Interface().(uuid.UUID); ok {
+		if valuer == uuid.Nil {
+			return nil
+		}
+		return valuer.String()
+	}
 	return nil
 }
 
