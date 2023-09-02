@@ -14,8 +14,8 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/go-playground/validator/v10/non-standard/validators"
-	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/google/uuid"
+	"github.com/newrelic/go-agent/v3/newrelic"
 
 	"github.com/owlify/sparrow/errors"
 	"github.com/owlify/sparrow/logger"
