@@ -63,7 +63,6 @@ func Logger(next httprouter.Handle) httprouter.Handle {
 			}
 
 			logger.E(r.Context(), errors.New(errMsg), "Api Request Failed",
-				logger.Field("service_name", "checkout-partner-apps-integration"),
 				logger.Field("status", lrw.statusCode),
 				logger.Field("url", r.URL.String()),
 				logger.Field("duration_ms", float64(time.Since(startTime).Nanoseconds())/1e6),
@@ -72,7 +71,6 @@ func Logger(next httprouter.Handle) httprouter.Handle {
 		}
 
 		logger.I(r.Context(), "Request processed",
-			logger.Field("service_name", "checkout-partner-apps-integration"),
 			logger.Field("status", lrw.statusCode),
 			logger.Field("url", r.URL.String()),
 			logger.Field("duration_ms", float64(time.Since(startTime).Nanoseconds())/1e6),
