@@ -16,6 +16,7 @@ require (
 	github.com/newrelic/go-agent/v3/integrations/nrhttprouter v1.0.2
 	github.com/newrelic/go-agent/v3/integrations/nrpgx v1.0.0
 	github.com/pkg/errors v0.9.1
+	github.com/segmentio/kafka-go v0.4.42
 	github.com/tuvistavie/securerandom v0.0.0-20140719024926-15512123a948
 	go.uber.org/zap v1.25.0
 	gorm.io/driver/postgres v1.5.2
@@ -55,6 +56,7 @@ require (
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/onsi/ginkgo/v2 v2.11.0 // indirect
+	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/quic-go/qpack v0.4.0 // indirect
 	github.com/quic-go/qtls-go1-20 v0.3.2 // indirect
 	github.com/quic-go/quic-go v0.37.4 // indirect
