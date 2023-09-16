@@ -2,6 +2,8 @@ package db
 
 import (
 	"time"
+	"context"
+	"errors"
 
 	_ "github.com/newrelic/go-agent/v3/integrations/nrpgx"
 	"gorm.io/gorm"
@@ -44,6 +46,41 @@ func NewDB(opts *DBOpts) DB {
 
 func Get() DB {
 	return dbInstance
+}
+
+type trxCallback func(ctx context.Context, db DB) error
+
+func (c *dbClient) WithTrx(ctx context.Context, callback trxCallback) (err error) {
+	dbTx := c.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			var e error
+			if m, ok := r.(string); ok {
+				e = errors.New(m)
+			} else if m, ok := r.(error); ok {
+				e = m
+			}
+			err = e
+			dbTx.Rollback()
+		}
+	}()
+
+	dbTxClient := &dbClient{
+		db: dbTx,
+	}
+
+	if err = callback(ctx, dbTxClient); err != nil {
+		logger.I("Error in runner, rolling back transaction", logger.Field("error", err))
+		dbTx.Rollback()
+		return err
+	}
+
+	if err = dbTx.Commit().Error; err != nil {
+		logger.E(err, "error while committing db transaction")
+		return fmt.Errorf("database persistence error: %w", err)
+	}
+
+	return nil
 }
 
 func (c *dbClient) Connect() error {
