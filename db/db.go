@@ -1,16 +1,16 @@
 package db
 
 import (
-	"time"
-	"fmt"
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	_ "github.com/newrelic/go-agent/v3/integrations/nrpgx"
+	"github.com/owlify/sparrow/logger"
 	"gorm.io/gorm"
 	gormLogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"github.com/owlify/sparrow/logger"
 )
 
 const (
@@ -36,6 +36,7 @@ type DB interface {
 	Connect() error
 	Close() error
 	Get() *gorm.DB
+	WithTrx(ctx context.Context, callback trxCallback) (err error)
 }
 
 func NewDB(opts *DBOpts) DB {
