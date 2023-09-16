@@ -2,6 +2,7 @@ package db
 
 import (
 	"time"
+	"fmt"
 	"context"
 	"errors"
 
@@ -9,6 +10,7 @@ import (
 	"gorm.io/gorm"
 	gormLogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"github.com/owlify/sparrow/logger"
 )
 
 const (
@@ -70,13 +72,13 @@ func (c *dbClient) WithTrx(ctx context.Context, callback trxCallback) (err error
 	}
 
 	if err = callback(ctx, dbTxClient); err != nil {
-		logger.I("Error in runner, rolling back transaction", logger.Field("error", err))
+		logger.I(ctx, "Error in runner, rolling back transaction", logger.Field("error", err))
 		dbTx.Rollback()
 		return err
 	}
 
 	if err = dbTx.Commit().Error; err != nil {
-		logger.E(err, "error while committing db transaction")
+		logger.E(ctx, err, "error while committing db transaction")
 		return fmt.Errorf("database persistence error: %w", err)
 	}
 
