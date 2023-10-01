@@ -225,7 +225,8 @@ func (r *Request) ParseAndValidateParams(s interface{}, structValidations ...val
 		e = handleValidationErrors(err)
 		return errors.NewWithErr("bad_request", e)
 	}
-	return validateStruct(s, structValidations...)
+	e = validateStruct(s, structValidations...)
+	return errors.NewWithErr("bad_request", e)
 }
 
 func validateStruct(s interface{}, structValidations ...validator.StructLevelFunc) ValidationErrorInterface {
@@ -314,7 +315,7 @@ func (r *Request) Bind(v interface{}) error {
 	r.Body = io.NopCloser(bytes.NewReader(body)) // setup body again so it can be read by any other middleware
 
 	d := json.NewDecoder(bytes.NewReader(body))
-	d.DisallowUnknownFields()
+	// d.DisallowUnknownFields()
 	return d.Decode(v)
 }
 
