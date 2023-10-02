@@ -86,7 +86,7 @@ func (c *kafkaConsumer) consume(ctx context.Context) {
 		return
 	}
 
-	event, err := convertToMap(m.Value)
+	event, err := newEvent(m.Value)
 	if err != nil {
 		logger.E(ctx, err, "[KafkaConsumer] Error while unmarshalling event", logger.Field("event", string(m.Value)), logger.Field("error", err.Error()))
 		return
@@ -108,7 +108,7 @@ func (c *kafkaConsumer) consume(ctx context.Context) {
 
 	if err != nil {
 		logger.E(ctx, err, "[KafkaConsumer] Processing of event failed",
-			logger.Field("event_id", event["event_id"]),
+			logger.Field("event_id", event.ID),
 			logger.Field("error", err.Error()))
 	}
 }

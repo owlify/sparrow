@@ -6,5 +6,5 @@ import (
 
 type EventHandler interface {
 	Name() string
-	Handle(ctx context.Context, event map[string]interface{}) error
+	Handle(ctx context.Context, event *Event) error
 }
