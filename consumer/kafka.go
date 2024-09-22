@@ -27,9 +27,8 @@ type KafkaConsumerOpts struct {
 }
 
 type KafkaSASLOpts struct {
-	Username  string
-	Password  string
-	Mechanism string
+	Username string
+	Password string
 }
 
 type kafkaConsumer struct {
@@ -53,8 +52,13 @@ const (
 func NewKafkaConsumer(opts *KafkaConsumerOpts) Consumer {
 	var dialer *kafka.Dialer
 	if opts.SASLConfig != nil {
+		dialerMechanism, err := scram.Mechanism(scram.SHA256, opts.SASLConfig.Username, opts.SASLConfig.Password)
+		if err != nil {
+			panic("Failed to create SCRAM mechanism: " + err.Error())
+		}
+
 		dialer = &kafka.Dialer{
-			SASLMechanism: scram.Mechanism(opts.SASLConfig.Mechanism, opts.SASLConfig.Username, opts.SASLConfig.Password),
+			SASLMechanism: dialerMechanism,
 		}
 	} else {
 		dialer = &kafka.Dialer{} // Default dialer without SASL
