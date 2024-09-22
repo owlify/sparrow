@@ -2,8 +2,11 @@ package cache
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
@@ -18,6 +21,8 @@ type RedisCacheOpts struct {
 	DB                    int
 	Host                  string
 	Password              string
+	Username              string
+	CertPath              string
 	MaxIdleConnection     int
 	MaxActiveConnection   int
 	IdleConnectionTimeout time.Duration
@@ -48,6 +53,27 @@ func InitRedisCache(opts *RedisCacheOpts) {
 }
 
 func initRedisPool(opts *RedisCacheOpts) *redis.Pool {
+	var tlsConfig *tls.Config
+	if opts.CertPath != "" {
+		caCert, err := ioutil.ReadFile(opts.CertPath)
+		if err != nil {
+			panic(fmt.Sprintf("Failed to read CA certificate: %v", err))
+		}
+
+		// Create a new certificate pool and add the CA cert
+		caCertPool := x509.NewCertPool()
+		if ok := caCertPool.AppendCertsFromPEM(caCert); !ok {
+			panic("Failed to append CA certificate")
+		}
+
+		// Create a TLS configuration using the CA cert
+		tlsConfig = &tls.Config{
+			MinVersion:         tls.VersionTLS12,
+			RootCAs:            caCertPool,
+			InsecureSkipVerify: true,
+		}
+	}
+
 	return &redis.Pool{
 		MaxIdle:         opts.MaxIdleConnection,
 		MaxActive:       opts.MaxActiveConnection,
@@ -55,8 +81,10 @@ func initRedisPool(opts *RedisCacheOpts) *redis.Pool {
 		MaxConnLifetime: opts.MaxConnectionLifetime,
 		Dial: func() (redis.Conn, error) {
 			passwordOption := redis.DialPassword(opts.Password)
+			usernameOption := redis.DialUsername(opts.Username)
 			dbOption := redis.DialDatabase(opts.DB)
-			c, dialErr := redis.Dial("tcp", opts.Host, passwordOption, dbOption)
+			tlsOption := redis.DialTLSConfig(tlsConfig)
+			c, dialErr := redis.Dial("tcp", opts.Host, usernameOption, passwordOption, dbOption, tlsOption, redis.DialUseTLS(true))
 			if dialErr != nil {
 				panic(fmt.Sprintf("dial error: %s", dialErr.Error()))
 			}
