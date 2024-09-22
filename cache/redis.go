@@ -18,6 +18,7 @@ type RedisCacheOpts struct {
 	DB                    int
 	Host                  string
 	Password              string
+	Username              string
 	MaxIdleConnection     int
 	MaxActiveConnection   int
 	IdleConnectionTimeout time.Duration
@@ -55,8 +56,9 @@ func initRedisPool(opts *RedisCacheOpts) *redis.Pool {
 		MaxConnLifetime: opts.MaxConnectionLifetime,
 		Dial: func() (redis.Conn, error) {
 			passwordOption := redis.DialPassword(opts.Password)
+			usernameOption := redis.DialUsername(opts.Username)
 			dbOption := redis.DialDatabase(opts.DB)
-			c, dialErr := redis.Dial("tcp", opts.Host, passwordOption, dbOption)
+			c, dialErr := redis.Dial("tcp", opts.Host, usernameOption, passwordOption, dbOption)
 			if dialErr != nil {
 				panic(fmt.Sprintf("dial error: %s", dialErr.Error()))
 			}
