@@ -6,14 +6,22 @@ import (
 	"strings"
 
 	"github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go/sasl/scram"
 
 	"github.com/owlify/sparrow/errors"
 )
 
 type KafkaProducerOpts struct {
-	Brokers  string
-	Topic    string
-	MaxRetry int
+	Brokers    string
+	Topic      string
+	MaxRetry   int
+	SASLConfig *KafkaSASLOpts
+}
+
+type KafkaSASLOpts struct {
+	Username  string
+	Password  string
+	Mechanism string
 }
 
 type kafkaProducer struct {
@@ -27,12 +35,21 @@ type Producer interface {
 }
 
 func NewKafkaProducer(opts *KafkaProducerOpts) Producer {
+	var dialer *kafka.Dialer
+	if opts.SASLConfig != nil {
+		dialer = &kafka.Dialer{
+			SASLMechanism: scram.Mechanism(opts.SASLConfig.Mechanism, opts.SASLConfig.Username, opts.SASLConfig.Password),
+		}
+	} else {
+		dialer = &kafka.Dialer{} // Default dialer without SASL
+	}
 	return &kafkaProducer{
 		writer: kafka.NewWriter(kafka.WriterConfig{
 			Brokers:     strings.Split(opts.Brokers, ","),
 			Topic:       opts.Topic,
 			MaxAttempts: opts.MaxRetry,
 			BatchSize:   1,
+			Dialer:      dialer, // Set the dialer with or without SASL
 		}),
 		opts: opts,
 	}

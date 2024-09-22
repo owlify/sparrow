@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/segmentio/kafka-go"
-	"github.com/segmentio/kafka-go/sasl/plain"
+	"github.com/segmentio/kafka-go/sasl/scram"
 
 	"github.com/owlify/sparrow/errors"
 	"github.com/owlify/sparrow/logger"
@@ -27,8 +27,9 @@ type KafkaConsumerOpts struct {
 }
 
 type KafkaSASLOpts struct {
-	Username string
-	Password string
+	Username  string
+	Password  string
+	Mechanism string
 }
 
 type kafkaConsumer struct {
@@ -53,10 +54,7 @@ func NewKafkaConsumer(opts *KafkaConsumerOpts) Consumer {
 	var dialer *kafka.Dialer
 	if opts.SASLConfig != nil {
 		dialer = &kafka.Dialer{
-			SASLMechanism: plain.Mechanism{
-				Username: opts.SASLConfig.Username,
-				Password: opts.SASLConfig.Password,
-			},
+			SASLMechanism: scram.Mechanism(opts.SASLConfig.Mechanism, opts.SASLConfig.Username, opts.SASLConfig.Password),
 		}
 	} else {
 		dialer = &kafka.Dialer{} // Default dialer without SASL
