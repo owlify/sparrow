@@ -10,18 +10,25 @@ import (
 	"time"
 
 	"github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go/sasl/plain"
 
 	"github.com/owlify/sparrow/errors"
 	"github.com/owlify/sparrow/logger"
 )
 
 type KafkaConsumerOpts struct {
-	Brokers  string
-	GroupID  string
-	Topic    string
-	MinBytes int
-	MaxBytes int
-	MaxRetry int
+	Brokers    string
+	GroupID    string
+	Topic      string
+	MinBytes   int
+	MaxBytes   int
+	MaxRetry   int
+	SASLConfig *KafkaSASLOpts
+}
+
+type KafkaSASLOpts struct {
+	Username string
+	Password string
 }
 
 type kafkaConsumer struct {
@@ -43,6 +50,18 @@ const (
 )
 
 func NewKafkaConsumer(opts *KafkaConsumerOpts) Consumer {
+	var dialer *kafka.Dialer
+	if opts.SASLConfig != nil {
+		dialer = &kafka.Dialer{
+			SASLMechanism: plain.Mechanism{
+				Username: opts.SASLConfig.Username,
+				Password: opts.SASLConfig.Password,
+			},
+		}
+	} else {
+		dialer = &kafka.Dialer{} // Default dialer without SASL
+	}
+
 	return &kafkaConsumer{
 		reader: kafka.NewReader(kafka.ReaderConfig{
 			Brokers:        strings.Split(opts.Brokers, ","),
@@ -52,6 +71,7 @@ func NewKafkaConsumer(opts *KafkaConsumerOpts) Consumer {
 			MaxBytes:       opts.MaxBytes,
 			CommitInterval: 0, // no auto commit
 			StartOffset:    kafka.LastOffset,
+			Dialer:         dialer,
 		}),
 		opts: opts,
 	}
