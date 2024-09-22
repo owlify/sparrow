@@ -2,6 +2,7 @@ package consumer
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -10,7 +11,7 @@ import (
 	"time"
 
 	"github.com/segmentio/kafka-go"
-	"github.com/segmentio/kafka-go/sasl/scram"
+	"github.com/segmentio/kafka-go/sasl/plain"
 
 	"github.com/owlify/sparrow/errors"
 	"github.com/owlify/sparrow/logger"
@@ -52,13 +53,14 @@ const (
 func NewKafkaConsumer(opts *KafkaConsumerOpts) Consumer {
 	var dialer *kafka.Dialer
 	if opts.SASLConfig != nil {
-		dialerMechanism, err := scram.Mechanism(scram.SHA256, opts.SASLConfig.Username, opts.SASLConfig.Password)
-		if err != nil {
-			panic("Failed to create SCRAM mechanism: " + err.Error())
-		}
-
 		dialer = &kafka.Dialer{
-			SASLMechanism: dialerMechanism,
+			SASLMechanism: plain.Mechanism{
+				Username: opts.SASLConfig.Username,
+				Password: opts.SASLConfig.Password,
+			},
+			TLS: &tls.Config{
+				InsecureSkipVerify: true,
+			},
 		}
 	} else {
 		dialer = &kafka.Dialer{} // Default dialer without SASL
