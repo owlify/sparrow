@@ -14,6 +14,7 @@ type WorkerOpts struct {
 	Concurrency     int
 	Queues          []*Queue
 	ShutdownTimeout time.Duration
+	RedisDB int
 }
 
 type worker struct {
@@ -36,6 +37,7 @@ func NewWorker(opts *WorkerOpts) Worker {
 	redisClientOpts := asynq.RedisClientOpt{
 		PoolSize: opts.PoolSize,
 		Addr:     opts.RedisUrl,
+		DB: opts.RedisDB,
 	}
 
 	queues := map[string]int{}

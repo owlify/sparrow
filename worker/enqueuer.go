@@ -21,6 +21,7 @@ type enqueuer struct {
 type EnqueuerOpts struct {
 	PoolSize int
 	RedisUrl string
+	RedisDB int
 }
 
 type Enqueuer interface {
@@ -33,6 +34,7 @@ func NewEnqueuer(opts *EnqueuerOpts) Enqueuer {
 		redisConnection := asynq.RedisClientOpt{
 			PoolSize: opts.PoolSize,
 			Addr:     opts.RedisUrl,
+			DB: opts.RedisDB,
 		}
 
 		enqueuerInstance = &enqueuer{
