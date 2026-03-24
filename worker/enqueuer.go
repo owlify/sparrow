@@ -25,6 +25,7 @@ type EnqueuerOpts struct {
 }
 
 type Enqueuer interface {
+	EnqueueTask(t *Task) error
 	EnqueueUniqueTask(t *Task, uniqueTTL time.Duration) error
 	EnqueueUniqueTaskIn(t *Task, delay time.Duration, uniqueTTL time.Duration) error
 }
@@ -43,6 +44,22 @@ func NewEnqueuer(opts *EnqueuerOpts) Enqueuer {
 	})
 
 	return enqueuerInstance
+}
+
+func (e *enqueuer) EnqueueTask(task *Task) error {
+	taskID := uuid.New().String()
+	bytes, err := json.Marshal(task.Payload)
+	if err != nil {
+		return err
+	}
+
+	asynqTask := asynq.NewTask(task.Name, bytes)
+	opts := []asynq.Option{asynq.TaskID(taskID), asynq.MaxRetry(task.Retry), asynq.Timeout(task.Timeout)}
+	_, err = e.client.Enqueue(
+		asynqTask,
+		opts...,
+	)
+	return err
 }
 
 func (e *enqueuer) EnqueueUniqueTask(task *Task, uniqueTTL time.Duration) error {
