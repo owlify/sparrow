@@ -25,8 +25,8 @@ type EnqueuerOpts struct {
 }
 
 type Enqueuer interface {
-	EnqueueUniqueTask(*Task) error
-	EnqueueUniqueTaskIn(*Task, time.Duration) error
+	EnqueueUniqueTask(*Task, uniqueTTL time.Duration) error
+	EnqueueUniqueTaskIn(*Task, time.Duration, uniqueTTL time.Duration) error
 }
 
 func NewEnqueuer(opts *EnqueuerOpts) Enqueuer {
@@ -45,7 +45,7 @@ func NewEnqueuer(opts *EnqueuerOpts) Enqueuer {
 	return enqueuerInstance
 }
 
-func (e *enqueuer) EnqueueUniqueTask(task *Task) error {
+func (e *enqueuer) EnqueueUniqueTask(task *Task, uniqueTTL time.Duration) error {
 	taskID := uuid.New().String()
 	bytes, err := json.Marshal(task.Payload)
 	if err != nil {
@@ -53,7 +53,7 @@ func (e *enqueuer) EnqueueUniqueTask(task *Task) error {
 	}
 
 	asynqTask := asynq.NewTask(task.Name, bytes)
-	opts := []asynq.Option{asynq.TaskID(taskID), asynq.Unique(time.Hour), asynq.MaxRetry(task.Retry), asynq.Timeout(task.Timeout)}
+	opts := []asynq.Option{asynq.TaskID(taskID), asynq.Unique(uniqueTTL), asynq.MaxRetry(task.Retry), asynq.Timeout(task.Timeout)}
 	_, err = e.client.Enqueue(
 		asynqTask,
 		opts...,
@@ -61,7 +61,7 @@ func (e *enqueuer) EnqueueUniqueTask(task *Task) error {
 	return err
 }
 
-func (e *enqueuer) EnqueueUniqueTaskIn(task *Task, delay time.Duration) error {
+func (e *enqueuer) EnqueueUniqueTaskIn(task *Task, delay time.Duration, uniqueTTL time.Duration) error {
 	taskID := uuid.New().String()
 	bytes, err := json.Marshal(task.Payload)
 	if err != nil {
@@ -69,7 +69,7 @@ func (e *enqueuer) EnqueueUniqueTaskIn(task *Task, delay time.Duration) error {
 	}
 
 	asynqTask := asynq.NewTask(task.Name, bytes)
-	opts := []asynq.Option{asynq.TaskID(taskID), asynq.Unique(time.Hour), asynq.MaxRetry(task.Retry), asynq.Timeout(task.Timeout), asynq.ProcessIn(delay)}
+	opts := []asynq.Option{asynq.TaskID(taskID), asynq.Unique(uniqueTTL), asynq.MaxRetry(task.Retry), asynq.Timeout(task.Timeout), asynq.ProcessIn(delay)}
 	_, err = e.client.Enqueue(
 		asynqTask,
 		opts...,
