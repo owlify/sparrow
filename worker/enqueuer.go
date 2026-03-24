@@ -26,7 +26,7 @@ type EnqueuerOpts struct {
 
 type Enqueuer interface {
 	EnqueueUniqueTask(t *Task, uniqueTTL time.Duration) error
-	EnqueueUniqueTaskIn(t *Task, time.Duration, uniqueTTL time.Duration) error
+	EnqueueUniqueTaskIn(t *Task, delay time.Duration, uniqueTTL time.Duration) error
 }
 
 func NewEnqueuer(opts *EnqueuerOpts) Enqueuer {
